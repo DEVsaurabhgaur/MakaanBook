@@ -108,6 +108,10 @@ function TenantsPage() {
       toast.error("Full name is required");
       return;
     }
+    if (phone && !/^\d{10}$/.test(phone.trim())) {
+      toast.error("Phone number must be exactly 10 digits");
+      return;
+    }
     setSaving(true);
     try {
       let idProofUrl = null;
