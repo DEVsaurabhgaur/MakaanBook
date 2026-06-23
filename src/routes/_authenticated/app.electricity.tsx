@@ -71,13 +71,16 @@ function ElectricityPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const { data: tenantsData } = await supabase.from("tenants").select("*").eq("landlord_id", user.id);
+      const { data: tenantsData, error: tenantsErr } = await supabase.from("tenants").select("*").eq("landlord_id", user.id);
+      if (tenantsErr) throw tenantsErr;
       setTenants(tenantsData || []);
 
-      const { data: roomsData } = await supabase.from("rooms").select("*").eq("landlord_id", user.id);
+      const { data: roomsData, error: roomsErr } = await supabase.from("rooms").select("*").eq("landlord_id", user.id);
+      if (roomsErr) throw roomsErr;
       setRooms(roomsData || []);
 
-      const { data: housesData } = await supabase.from("houses").select("*").eq("landlord_id", user.id);
+      const { data: housesData, error: housesErr } = await supabase.from("houses").select("*").eq("landlord_id", user.id);
+      if (housesErr) throw housesErr;
       setHouses(housesData || []);
 
       const { data: billsData, error: billsErr } = await supabase
