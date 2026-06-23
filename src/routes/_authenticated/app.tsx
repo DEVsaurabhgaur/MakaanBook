@@ -57,7 +57,7 @@ function AppShell() {
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary text-primary-foreground"><Building2 className="h-4 w-4" /></span>
           MakaanBook
         </Link>
-        <button onClick={() => setOpen(!open)} className="rounded-md p-2 hover:bg-accent">{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
+        <button onClick={() => setOpen(!open)} aria-label={open ? "Close navigation menu" : "Open navigation menu"} className="rounded-md p-2 hover:bg-accent">{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
       </div>
       <div className="flex">
         <aside className={cn(
