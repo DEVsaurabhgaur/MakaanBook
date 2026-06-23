@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Calculator, Zap, HelpCircle, CheckCircle, ArrowRight
+  Calculator, Zap, HelpCircle, CheckCircle, ArrowRight, AlertCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -77,11 +77,25 @@ function BillCalculatorPage() {
   const fixed = parseFloat(fixedCharge) || 0;
 
   let units = 0;
+  let isInvalid = false;
+  let warningMessage = "";
+
   if (isReplaced) {
     const oFinal = parseFloat(oldFinal) || 0;
     const nStart = parseFloat(newStart) || 0;
+    if (oFinal < prev) {
+      isInvalid = true;
+      warningMessage = "Old meter final reading cannot be less than previous reading.";
+    } else if (curr < nStart) {
+      isInvalid = true;
+      warningMessage = "Current reading cannot be less than new meter start reading.";
+    }
     units = (oFinal - prev) + (curr - nStart);
   } else {
+    if (curr < prev) {
+      isInvalid = true;
+      warningMessage = "Current reading cannot be less than previous reading.";
+    }
     units = curr - prev;
   }
   if (units < 0) units = 0;
@@ -177,6 +191,12 @@ function BillCalculatorPage() {
             </CardHeader>
             <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
               <div className="space-y-3 text-xs">
+                {isInvalid && (
+                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-[11px] font-medium flex items-start gap-1.5 leading-normal">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{warningMessage}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Units Consumed:</span>
                   <span className="font-bold">{units} Units</span>
