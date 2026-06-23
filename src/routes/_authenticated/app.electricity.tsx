@@ -173,6 +173,15 @@ function ElectricityPage() {
       toast.error("Current reading cannot be lower than previous reading");
       return;
     }
+    const paidAmt = parseFloat(amountPaid) || 0;
+    if (paidAmt < 0) {
+      toast.error("Amount paid cannot be negative");
+      return;
+    }
+    if (paidAmt > computedTotalBill) {
+      toast.error(`Amount paid (₹${paidAmt}) cannot exceed the total bill amount (₹${computedTotalBill})`);
+      return;
+    }
     setSaving(true);
     try {
       const selectedTenant = tenants.find((t) => t.id === tenantId);
