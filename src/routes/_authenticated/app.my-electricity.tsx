@@ -51,19 +51,21 @@ function MyElectricityPage() {
         setTenant(tenantData);
 
         if (tenantData.room_id) {
-          const { data: roomData } = await supabase
+          const { data: roomData, error: roomErr } = await supabase
             .from("rooms")
             .select("*")
             .eq("id", tenantData.room_id)
             .single();
+          if (roomErr) throw roomErr;
           setRoom(roomData);
 
           if (roomData) {
-            const { data: houseData } = await supabase
+            const { data: houseData, error: houseErr } = await supabase
               .from("houses")
               .select("*")
               .eq("id", roomData.house_id)
               .single();
+            if (houseErr) throw houseErr;
             setHouse(houseData);
           }
         }
