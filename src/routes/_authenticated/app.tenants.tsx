@@ -104,12 +104,24 @@ function TenantsPage() {
 
   async function handleAddTenant(e: React.FormEvent) {
     e.preventDefault();
-    if (!fullName) {
+    if (!fullName.trim()) {
       toast.error("Full name is required");
       return;
     }
     if (phone && !/^\d{10}$/.test(phone.trim())) {
       toast.error("Phone number must be exactly 10 digits");
+      return;
+    }
+    if (altPhone && !/^\d{10}$/.test(altPhone.trim())) {
+      toast.error("Alternate phone number must be exactly 10 digits");
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    if (aadharNumber && !/^\d{12}$/.test(aadharNumber.trim())) {
+      toast.error("Aadhar number must be exactly 12 digits");
       return;
     }
     setSaving(true);
