@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Building2, Users, Receipt, Zap, FileText, ArrowRight, IndianRupee, LayoutDashboard, Plus, Home, Sparkles, AlertCircle, Loader2, CheckCircle2
+  Building2, Users, Receipt, Zap, FileText, ArrowRight, IndianRupee, Home, Sparkles, AlertCircle, Loader2, CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
