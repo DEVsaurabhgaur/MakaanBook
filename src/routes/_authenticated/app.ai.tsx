@@ -47,7 +47,6 @@ function AiAssistantPage() {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
     setLoading(true);
-
     try {
       // Exclude system/initial message from prompt history for standard clean API payload
       const historyPayload = messages
