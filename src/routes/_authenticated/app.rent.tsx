@@ -115,6 +115,12 @@ function RentRecordsPage() {
       toast.error("Please select a tenant");
       return;
     }
+    const totalRentCheck = parseFloat(rentAmount) || 0;
+    const totalPaidCheck = parseFloat(amountPaid) || 0;
+    if (totalPaidCheck > totalRentCheck) {
+      toast.error("Amount paid cannot exceed the rent amount");
+      return;
+    }
     setSaving(true);
     try {
       const selectedTenant = tenants.find((t) => t.id === tenantId);
