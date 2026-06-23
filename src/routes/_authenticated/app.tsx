@@ -68,7 +68,7 @@ function AppShell() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground"><Building2 className="h-5 w-5" /></span>
             MakaanBook
           </Link>
-          <nav className="space-y-1">
+          <nav aria-label="Primary navigation" className="space-y-1">
             {nav.map((n) => (
               <Link
                 key={n.to} to={n.to as any} onClick={() => setOpen(false)}
@@ -88,7 +88,7 @@ function AppShell() {
             </Button>
           </div>
         </aside>
-        <main className="flex-1 px-4 py-6 md:px-8 md:py-10">
+        <main role="main" className="flex-1 px-4 py-6 md:px-8 md:py-10">
           <Outlet />
         </main>
       </div>
