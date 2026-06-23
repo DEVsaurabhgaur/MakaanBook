@@ -138,7 +138,7 @@ function AiAssistantPage() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && !loading) {
                     handleSend(input);
                   }
                 }}
