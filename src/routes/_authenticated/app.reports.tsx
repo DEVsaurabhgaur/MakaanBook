@@ -101,7 +101,7 @@ function ReportsPage() {
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(22);
-      doc.text("MAKAAANBOOK", 15, 20);
+      doc.text("MAKAANBOOK", 15, 20);
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.text("Rent & Electricity Bill Statement", 15, 28);
