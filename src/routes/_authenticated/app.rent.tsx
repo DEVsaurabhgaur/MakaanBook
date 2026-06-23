@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Receipt, Plus, Search, IndianRupee, CreditCard, Calendar, Upload, FileText, CheckCircle2, AlertCircle, Clock, Trash2, Edit2, Loader2, Save
+  Receipt, Plus, FileText, CheckCircle2, AlertCircle, Clock, Trash2, Loader2, Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
