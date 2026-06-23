@@ -5,7 +5,7 @@ import process from "node:process";
 
 export const queryMakaanBookAi = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
+  .validator(
     z.object({
       prompt: z.string().min(1),
       history: z.array(
