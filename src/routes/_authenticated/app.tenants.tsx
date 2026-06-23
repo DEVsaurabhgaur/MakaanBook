@@ -444,11 +444,11 @@ function TenantsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <Label htmlFor="tenantPhone">Primary Phone</Label>
-                  <Input id="tenantPhone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9876543210" />
+                  <Input id="tenantPhone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="9876543210" />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="tenantAltPhone">Alt Phone</Label>
-                  <Input id="tenantAltPhone" value={altPhone} onChange={(e) => setAltPhone(e.target.value)} placeholder="9988776655" />
+                  <Input id="tenantAltPhone" type="tel" value={altPhone} onChange={(e) => setAltPhone(e.target.value)} placeholder="9988776655" />
                 </div>
               </div>
 
