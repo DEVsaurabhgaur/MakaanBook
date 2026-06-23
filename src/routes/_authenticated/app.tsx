@@ -60,6 +60,13 @@ function AppShell() {
         <button onClick={() => setOpen(!open)} aria-label={open ? "Close navigation menu" : "Open navigation menu"} className="rounded-md p-2 hover:bg-accent">{open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
       </div>
       <div className="flex">
+        {open && (
+          <div
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm md:hidden"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+        )}
         <aside className={cn(
           "fixed inset-y-0 left-0 z-40 w-64 border-r border-sidebar-border bg-sidebar p-4 transition-transform md:sticky md:top-0 md:h-screen md:translate-x-0",
           open ? "translate-x-0" : "-translate-x-full",
