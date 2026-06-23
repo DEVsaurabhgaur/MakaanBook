@@ -206,6 +206,11 @@ function PropertiesPage() {
   }
 
   async function handleDeleteHouse(id: string) {
+    const occupiedCount = rooms.filter((r) => r.house_id === id && r.is_occupied).length;
+    if (occupiedCount > 0) {
+      toast.error(`Cannot delete: ${occupiedCount} room(s) still occupied. Vacate tenants first.`);
+      return;
+    }
     if (!confirm("Are you sure you want to delete this house? All its rooms will be deleted too.")) return;
     try {
       const { error } = await supabase.from("houses").delete().eq("id", id);
