@@ -92,6 +92,11 @@ function PropertiesPage() {
       toast.error("House name is required");
       return;
     }
+    const parsedRate = parseFloat(unitRate);
+    if (isNaN(parsedRate) || parsedRate <= 0) {
+      toast.error("Electricity rate must be a positive number");
+      return;
+    }
     setSaving(true);
     try {
       if (editingHouse) {
