@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { queryMakaanBookAi } from "@/lib/api/ai.functions";
 import {
   Sparkles, Send, Bot, User, CornerDownLeft, Loader2
@@ -41,7 +41,7 @@ function AiAssistantPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  async function handleSend(promptText: string) {
+  const handleSend = useCallback(async (promptText: string) => {
     if (!promptText.trim()) return;
     const userMsg: Message = { role: "user", content: promptText };
     setMessages((prev) => [...prev, userMsg]);
@@ -72,7 +72,7 @@ function AiAssistantPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [messages, loading]);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 h-[85vh] flex flex-col">
