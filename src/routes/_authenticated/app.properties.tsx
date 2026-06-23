@@ -272,7 +272,10 @@ function PropertiesPage() {
               {houses.map((house) => (
                 <div
                   key={house.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => setSelectedHouseId(house.id)}
+                  onKeyDown={(e) => e.key === "Enter" && setSelectedHouseId(house.id)}
                   className={`flex cursor-pointer flex-col gap-1.5 rounded-xl border p-4 transition-all hover:bg-card/40 ${
                     selectedHouseId === house.id
                       ? "border-primary bg-primary/5 shadow-md shadow-primary/5"
