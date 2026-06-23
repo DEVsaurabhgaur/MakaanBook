@@ -117,6 +117,14 @@ function RentRecordsPage() {
     }
     const totalRentCheck = parseFloat(rentAmount) || 0;
     const totalPaidCheck = parseFloat(amountPaid) || 0;
+    if (totalRentCheck <= 0) {
+      toast.error("Rent amount must be a positive number");
+      return;
+    }
+    if (totalPaidCheck < 0) {
+      toast.error("Amount paid cannot be negative");
+      return;
+    }
     if (totalPaidCheck > totalRentCheck) {
       toast.error("Amount paid cannot exceed the rent amount");
       return;
