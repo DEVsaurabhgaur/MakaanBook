@@ -285,10 +285,10 @@ function PropertiesPage() {
                   <div className="flex items-start justify-between">
                     <span className="font-display font-semibold text-md text-foreground">{house.house_name}</span>
                     <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => openHouseModal(house)}>
+                      <Button variant="ghost" size="icon" aria-label="Edit building" className="h-7 w-7 text-muted-foreground hover:text-foreground" onClick={() => openHouseModal(house)}>
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => handleDeleteHouse(house.id)}>
+                      <Button variant="ghost" size="icon" aria-label="Delete building" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => handleDeleteHouse(house.id)}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
