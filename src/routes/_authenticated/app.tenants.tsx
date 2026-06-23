@@ -387,7 +387,7 @@ function TenantsPage() {
                     <div className="flex gap-3 items-center">
                       <div className="h-10 w-10 rounded-full bg-zinc-800 flex items-center justify-center overflow-hidden border border-zinc-700">
                         {tenant.profile_pic_url ? (
-                          <img src={tenant.profile_pic_url} alt="Profile" className="h-full w-full object-cover" />
+                          <img src={tenant.profile_pic_url} alt={`${tenant.full_name} profile photo`} className="h-full w-full object-cover" />
                         ) : (
                           <Users className="h-5 w-5 text-zinc-500" />
                         )}
