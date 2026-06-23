@@ -44,35 +44,41 @@ function Dashboard() {
     setLoading(true);
     try {
       // Fetch profile
-      const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+      const { data: profile, error: profileErr } = await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
+      if (profileErr) throw profileErr;
       if (profile?.full_name) setFullName(profile.full_name);
 
       // Fetch user role
-      const { data: roleData } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+      const { data: roleData, error: roleErr } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+      if (roleErr) throw roleErr;
       const userRole = (roleData?.role as Role) || "landlord";
       setRole(userRole);
 
       if (userRole === "landlord") {
         // Fetch landlord metrics
-        const { count: houses } = await supabase.from("houses").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
+        const { count: houses, error: housesErr } = await supabase.from("houses").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
+        if (housesErr) throw housesErr;
         setHouseCount(houses || 0);
 
-        const { count: rooms } = await supabase.from("rooms").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
+        const { count: rooms, error: roomsErr } = await supabase.from("rooms").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
+        if (roomsErr) throw roomsErr;
         setRoomCount(rooms || 0);
 
-        const { count: tenants } = await supabase.from("tenants").select("*", { count: "exact", head: true }).eq("landlord_id", user.id).eq("is_active", true);
+        const { count: tenants, error: tenantsErr } = await supabase.from("tenants").select("*", { count: "exact", head: true }).eq("landlord_id", user.id).eq("is_active", true);
+        if (tenantsErr) throw tenantsErr;
         setTenantCount(tenants || 0);
 
         // Fetch rent record aggregates for the current year
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
 
-        const { data: currentRent } = await supabase
+        const { data: currentRent, error: currentRentErr } = await supabase
           .from("rent_records")
           .select("amount_paid, rent_amount, status")
           .eq("landlord_id", user.id)
           .eq("month", currentMonth)
           .eq("year", currentYear);
+        if (currentRentErr) throw currentRentErr;
 
         let collected = 0;
         let pending = 0;
@@ -89,38 +95,42 @@ function Dashboard() {
         setTotalPending(pending);
 
         // Fetch recent payments
-        const { data: recPayments } = await supabase
+        const { data: recPayments, error: recPaymentsErr } = await supabase
           .from("rent_records")
           .select("id, tenant_id, rent_amount, amount_paid, month, year, status, tenants(full_name)")
           .eq("landlord_id", user.id)
           .order("created_at", { ascending: false })
           .limit(5);
+        if (recPaymentsErr) throw recPaymentsErr;
 
         setRecentPayments(recPayments || []);
       } else {
         // Fetch active tenant profile
-        const { data: activeTenant } = await supabase
+        const { data: activeTenant, error: activeTenantErr } = await supabase
           .from("tenants")
           .select("*")
           .eq("user_id", user.id)
           .eq("is_active", true)
           .maybeSingle();
+        if (activeTenantErr) throw activeTenantErr;
 
         if (activeTenant) {
           setTenantRoom(activeTenant.room_id);
           // Fetch room
           if (activeTenant.room_id) {
-            const { data: roomData } = await supabase.from("rooms").select("*").eq("id", activeTenant.room_id).single();
+            const { data: roomData, error: roomErr } = await supabase.from("rooms").select("*").eq("id", activeTenant.room_id).single();
+            if (roomErr) throw roomErr;
             setTenantRoom(roomData);
 
             if (roomData) {
-              const { data: houseData } = await supabase.from("houses").select("*").eq("id", roomData.house_id).single();
+              const { data: houseData, error: houseErr } = await supabase.from("houses").select("*").eq("id", roomData.house_id).single();
+              if (houseErr) throw houseErr;
               setTenantHouse(houseData);
             }
           }
 
           // Fetch pending rent records
-          const { data: pendingRecord } = await supabase
+          const { data: pendingRecord, error: pendingErr } = await supabase
             .from("rent_records")
             .select("*")
             .eq("tenant_id", activeTenant.id)
@@ -129,11 +139,12 @@ function Dashboard() {
             .order("month", { ascending: false })
             .limit(1)
             .maybeSingle();
+          if (pendingErr) throw pendingErr;
 
           setPendingRent(pendingRecord);
 
           // Fetch latest electricity bill
-          const { data: latestElec } = await supabase
+          const { data: latestElec, error: latestElecErr } = await supabase
             .from("electricity_bills")
             .select("*")
             .eq("tenant_id", activeTenant.id)
@@ -141,6 +152,7 @@ function Dashboard() {
             .order("month", { ascending: false })
             .limit(1)
             .maybeSingle();
+          if (latestElecErr) throw latestElecErr;
 
           setLatestBill(latestElec);
         }
