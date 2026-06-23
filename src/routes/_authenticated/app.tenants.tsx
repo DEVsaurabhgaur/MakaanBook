@@ -330,10 +330,10 @@ function TenantsPage() {
                       </div>
                     </div>
                     <div className="flex gap-1.5">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-400 hover:bg-amber-400/10" title="Vacate Room" onClick={() => { setSelectedTenant(tenant); setVacateDialogOpen(true); }}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-400 hover:bg-amber-400/10" title="Vacate Room" aria-label={`Vacate ${tenant.full_name}`} onClick={() => { setSelectedTenant(tenant); setVacateDialogOpen(true); }}>
                         <UserMinus className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" title="Delete Permanently" onClick={() => handleDeleteTenant(tenant.id)}>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" title="Delete Permanently" aria-label={`Delete ${tenant.full_name} permanently`} onClick={() => handleDeleteTenant(tenant.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
