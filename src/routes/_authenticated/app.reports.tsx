@@ -76,20 +76,22 @@ function ReportsPage() {
       if (!tenant) throw new Error("Tenant not found");
 
       // Fetch rent records
-      const { data: rentData } = await supabase
+      const { data: rentData, error: rentErr } = await supabase
         .from("rent_records")
         .select("*")
         .eq("tenant_id", tenant.id)
         .order("year", { ascending: true })
         .order("month", { ascending: true });
+      if (rentErr) throw rentErr;
 
       // Fetch electricity bills
-      const { data: elecData } = await supabase
+      const { data: elecData, error: elecErr } = await supabase
         .from("electricity_bills")
         .select("*")
         .eq("tenant_id", tenant.id)
         .order("year", { ascending: true })
         .order("month", { ascending: true });
+      if (elecErr) throw elecErr;
 
       const room = rooms.find((r) => r.id === tenant.room_id || (rentData && rentData.length > 0 && r.id === rentData[0].room_id));
       const house = room ? houses.find((h) => h.id === room.house_id) : null;
