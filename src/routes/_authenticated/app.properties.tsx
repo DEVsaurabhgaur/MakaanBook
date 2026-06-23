@@ -145,8 +145,23 @@ function PropertiesPage() {
       toast.error("Please select or add a house first");
       return;
     }
-    if (!roomNumber || !rent) {
-      toast.error("Room number and rent are required");
+    if (!roomNumber.trim()) {
+      toast.error("Room number is required");
+      return;
+    }
+    const parsedRent = parseFloat(rent);
+    if (isNaN(parsedRent) || parsedRent < 0) {
+      toast.error("Monthly rent must be a non-negative number");
+      return;
+    }
+    const parsedDeposit = parseFloat(securityDeposit || "0");
+    if (isNaN(parsedDeposit) || parsedDeposit < 0) {
+      toast.error("Security deposit must be a non-negative number");
+      return;
+    }
+    const parsedDueDay = parseInt(dueDay || "5");
+    if (isNaN(parsedDueDay) || parsedDueDay < 1 || parsedDueDay > 31) {
+      toast.error("Rent due day must be between 1 and 31");
       return;
     }
     setSaving(true);
