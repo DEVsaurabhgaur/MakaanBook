@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type Role = "landlord" | "tenant" | null;
 
@@ -23,7 +24,13 @@ function AppShell() {
 
   useEffect(() => {
     supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => setRole((data?.role as Role) ?? "landlord"));
+      .then(({ data, error }) => {
+        if (error) {
+          toast.error(error.message || "Failed to load user role");
+          return;
+        }
+        setRole((data?.role as Role) ?? "landlord");
+      });
   }, [user.id]);
 
   async function signOut() {
