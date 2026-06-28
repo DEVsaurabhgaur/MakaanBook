@@ -14,9 +14,14 @@ function createSupabaseAdminClient() {
       ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
       ...(!SUPABASE_SERVICE_ROLE_KEY ? ['SUPABASE_SERVICE_ROLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Set them in your .env file.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    const message = `Missing Supabase admin env var(s): ${missing.join(', ')}. Admin operations will be unavailable.`;
+    console.warn(`[Supabase] ${message}`);
+    // Return a limited client — admin routes will fail gracefully, but SSR won't crash.
+    return createClient<Database>(
+      SUPABASE_URL || 'https://placeholder.supabase.co',
+      SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key',
+      { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } }
+    );
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {

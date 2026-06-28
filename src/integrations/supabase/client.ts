@@ -2,20 +2,33 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-function createSupabaseClient() {
-  // Use import.meta.env for client-side (Vite build-time replacement)
-  // Fall back to process.env for SSR (server-side rendering)
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
+// VITE_* vars are baked into the browser bundle at build time.
+// On the server (SSR), they are not available — fall back to process.env.
+const SUPABASE_URL =
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SUPABASE_URL) ||
+  (typeof process !== 'undefined' && process.env?.SUPABASE_URL) ||
+  '';
 
+const SUPABASE_PUBLISHABLE_KEY =
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SUPABASE_PUBLISHABLE_KEY) ||
+  (typeof process !== 'undefined' && process.env?.SUPABASE_PUBLISHABLE_KEY) ||
+  '';
+
+function createSupabaseClient() {
   if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
     const missing = [
-      ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
+      ...(!SUPABASE_URL ? ['SUPABASE_URL / VITE_SUPABASE_URL'] : []),
+      ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY / VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
     ];
-    const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Set them in your .env file.`;
-    console.error(`[Supabase] ${message}`);
-    throw new Error(message);
+    // Only warn on the server; the browser bundle always has these baked in.
+    if (typeof window === 'undefined') {
+      console.warn(`[Supabase] Missing env var(s) on server: ${missing.join(', ')}. Auth will fail.`);
+      // Return a no-op client for SSR so pages still render.
+      return createClient<Database>('https://placeholder.supabase.co', 'placeholder-key', {
+        auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+      });
+    }
+    throw new Error(`Missing Supabase environment variable(s): ${missing.join(', ')}. Set them in your .env file.`);
   }
 
   return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
@@ -23,7 +36,7 @@ function createSupabaseClient() {
       storage: typeof window !== 'undefined' ? localStorage : undefined,
       persistSession: true,
       autoRefreshToken: true,
-    }
+    },
   });
 }
 
@@ -37,4 +50,3 @@ export const supabase = new Proxy({} as ReturnType<typeof createSupabaseClient>,
     return Reflect.get(_supabase, prop, receiver);
   },
 });
-

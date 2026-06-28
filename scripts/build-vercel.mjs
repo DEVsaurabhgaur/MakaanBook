@@ -23,28 +23,83 @@ if (existsSync("dist/client")) {
   console.log("✅ dist/client  →  .vercel/output/static");
 }
 
-// ── 2. Edge function ──────────────────────────────────────────────────────────
+// ── 2. Serverless function (Node.js) ────────────────────────────────────────────────
 // TanStack Start server exports: { fetch(request, env, ctx) }
-// Vercel Edge Runtime natively supports the Web Fetch API - perfect match!
+// We wrap it in a Node.js req/res bridge to run on Vercel Serverless (nodejs20.x)
 const funcDir = join(vercelOut, "functions/index.func");
 mkdirSync(funcDir, { recursive: true });
 
 // Copy entire server build into function directory
 cpSync("dist/server", join(funcDir, "server"), { recursive: true });
 
-// Entry shim re-exports the Fetch API handler for Vercel Edge
+// Entry shim translates Node.js req/res to Web API Request/Response
 writeFileSync(
   join(funcDir, "index.js"),
-  `export { default } from './server/server.js';\n`
+  `import { Readable } from "node:stream";
+import server from "./server/server.js";
+
+export default async function handler(req, res) {
+  try {
+    const host = req.headers.host || "localhost";
+    const protocol = req.headers["x-forwarded-proto"] || "https";
+    const url = \`\${protocol}://\${host}\${req.url}\`;
+
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (value) {
+        if (Array.isArray(value)) {
+          for (const val of value) {
+            headers.append(key, val);
+          }
+        } else {
+          headers.set(key, value);
+        }
+      }
+    }
+
+    const hasBody = !["GET", "HEAD"].includes(req.method || "GET");
+    const webRequest = new Request(url, {
+      method: req.method,
+      headers: headers,
+      body: hasBody ? Readable.toWeb(req) : undefined,
+      duplex: hasBody ? "half" : undefined,
+    });
+
+    const webResponse = await server.fetch(webRequest);
+
+    res.statusCode = webResponse.status;
+    res.statusMessage = webResponse.statusText;
+    webResponse.headers.forEach((value, key) => {
+      res.setHeader(key, value);
+    });
+
+    if (webResponse.body) {
+      Readable.fromWeb(webResponse.body).pipe(res);
+    } else {
+      res.end();
+    }
+  } catch (error) {
+    console.error("SSR Function Error:", error);
+    res.statusCode = 500;
+    res.end("Internal Server Error");
+  }
+}`
 );
 
-// Vercel Edge function metadata
+// Vercel Serverless function metadata
 writeFileSync(
   join(funcDir, ".vc-config.json"),
-  JSON.stringify({ runtime: "edge", entrypoint: "index.js" }, null, 2)
+  JSON.stringify(
+    {
+      runtime: "nodejs20.x",
+      handler: "index.js",
+    },
+    null,
+    2
+  )
 );
 
-console.log("✅ dist/server  →  .vercel/output/functions/index.func  (edge runtime)");
+console.log("✅ dist/server  →  .vercel/output/functions/index.func  (nodejs20.x serverless runtime)");
 
 // ── 3. Routing config ─────────────────────────────────────────────────────────
 const config = {
