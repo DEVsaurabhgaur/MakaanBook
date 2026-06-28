@@ -1,6 +1,7 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install --include=dev",
+  "outputDirectory": "dist/client",
   "functions": {
     "api/ssr.js": {
       "includeFiles": "dist/server/**",
