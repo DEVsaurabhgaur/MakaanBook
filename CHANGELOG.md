@@ -4,23 +4,47 @@ All notable changes to MakaanBook are documented here.
 
 ## [Unreleased]
 
-### Added
-- Year filter for rent records (dynamic from existing records)
-- Robots meta tag and application-name for SEO
-- Emoji favicon and apple-touch-icon
-- Focus-visible accessibility outlines
-- Custom scrollbar styling for Webkit browsers
-- Smooth scrolling behavior globally
+### Performance
+- Parallelized all Supabase data fetches across every page using `Promise.all` — dashboard, properties, tenants, rent, electricity, reports, tenant self-service pages
+- Optimized OAuth callback to skip code exchange when session already exists
+- Added Vite `manualChunks` to split vendor libs (react, framer-motion, supabase, radix) into dedicated bundles
+- Upgraded Gemini model from `gemini-1.5-flash` to `gemini-1.5-flash-latest`
 
-### Fixed
-- `Checkbox` `onCheckedChange` type — casts `CheckedState` safely to `boolean`
-- Year dropdown in rent form is now dynamic (current year ±2 range)
-- AI assistant chat: prevents double-submit while loading
-- AI assistant: removed `loading` from `useCallback` deps to fix stale closures
-- Auth: Added `aria-label` to Google OAuth button
+### Accessibility
+- Added skip-to-main-content link in root shell layout
+- Added `id="main-content"` to main elements on landing and app shell
+- Added `role=status` and `aria-live` to all loading indicators
+- Added `sr-only` Tailwind utility class and `prefers-reduced-motion` media query
+- Added `aria-label` to AI chat input, send button, and suggestion buttons
+- Added `aria-label` to auth page submit, mode toggle, and Google OAuth buttons
+- Added `aria-hidden="true"` to all decorative icons across auth, nav, and landing
+- Added `aria-label` to sign out button in sidebar
 
-### Changed
-- Upgraded Gemini AI model from `gemini-1.5-flash` to `gemini-1.5-flash-latest`
+### Bug Fixes
+- Fixed `Checkbox` `onCheckedChange` type — correctly casts `CheckedState` to `boolean` in calculator and electricity forms
+- Fixed hardcoded year dropdowns — now dynamic based on `currentYear ± 2` across all forms
+- Fixed AI chat `handleSend` to guard against duplicate sends while loading
+- Added cleanup flag to AppShell role query to prevent setting state on unmounted component
+- Fixed OAuth callback to skip unnecessary code exchange when session already exists
+
+### Security
+- Added server-side input length limits to AI query validator (prompt ≤ 1000, history ≤ 20 entries)
+- Expanded `.env.example` with `SUPABASE_SERVICE_ROLE_KEY` annotation and security warnings
+- Added `validateServerEnv()` helper to `config.server.ts`
+
+### SEO
+- Added `robots`, `application-name`, emoji favicon, and `apple-touch-icon` to root head
+- Added `keywords` and `author` meta tags to landing page
+
+### Developer Experience
+- Added `CHANGELOG.md` to track project changes
+- Improved `README.md` with badges, tech stack table, and project structure
+- Added `formatINR`, `getMonthName`, `getShortMonthName`, `getStatusColor` helpers to `utils.ts`
+- Added `validateServerEnv()` to `config.server.ts`
+
+### UX
+- Added `scroll-behavior: smooth`, `focus-visible` outlines, and custom scrollbar styling
+- Added year filter to rent records page (dynamic from existing records)
 
 ---
 
