@@ -69,27 +69,27 @@ function RentRecordsPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const { data: tenantsData, error: tenantsErr } = await supabase.from("tenants").select("*").eq("landlord_id", user.id);
-      if (tenantsErr) throw tenantsErr;
-      setTenants(tenantsData || []);
+      const [tenantsRes, roomsRes, housesRes, recordsRes] = await Promise.all([
+        supabase.from("tenants").select("*").eq("landlord_id", user.id),
+        supabase.from("rooms").select("*").eq("landlord_id", user.id),
+        supabase.from("houses").select("*").eq("landlord_id", user.id),
+        supabase
+          .from("rent_records")
+          .select("*")
+          .eq("landlord_id", user.id)
+          .order("year", { ascending: false })
+          .order("month", { ascending: false })
+      ]);
 
-      const { data: roomsData, error: roomsErr } = await supabase.from("rooms").select("*").eq("landlord_id", user.id);
-      if (roomsErr) throw roomsErr;
-      setRooms(roomsData || []);
+      if (tenantsRes.error) throw tenantsRes.error;
+      if (roomsRes.error) throw roomsRes.error;
+      if (housesRes.error) throw housesRes.error;
+      if (recordsRes.error) throw recordsRes.error;
 
-      const { data: housesData, error: housesErr } = await supabase.from("houses").select("*").eq("landlord_id", user.id);
-      if (housesErr) throw housesErr;
-      setHouses(housesData || []);
-
-      const { data: recordsData, error: recErr } = await supabase
-        .from("rent_records")
-        .select("*")
-        .eq("landlord_id", user.id)
-        .order("year", { ascending: false })
-        .order("month", { ascending: false });
-
-      if (recErr) throw recErr;
-      setRentRecords(recordsData || []);
+      setTenants(tenantsRes.data || []);
+      setRooms(roomsRes.data || []);
+      setHouses(housesRes.data || []);
+      setRentRecords(recordsRes.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load rent records");
     } finally {
