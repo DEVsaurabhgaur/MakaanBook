@@ -19,20 +19,25 @@ export default defineConfig({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Group React ecosystem into one vendor chunk
-          "vendor-react": ["react", "react-dom"],
-          // Split Framer Motion separately — only needed for animations
-          "vendor-framer": ["framer-motion"],
-          // Supabase SDK
-          "vendor-supabase": ["@supabase/supabase-js"],
-          // Radix UI + shadcn components
-          "vendor-radix": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-select",
-            "@radix-ui/react-checkbox",
-            "@radix-ui/react-label",
-          ],
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            // Group React ecosystem into one vendor chunk
+            if (id.includes("/react/") || id.includes("/react-dom/") || id.includes("/scheduler/")) {
+              return "vendor-react";
+            }
+            // Split Framer Motion separately — only needed for animations
+            if (id.includes("/framer-motion/") || id.includes("/motion/")) {
+              return "vendor-framer";
+            }
+            // Supabase SDK & dependencies
+            if (id.includes("/@supabase/") || id.includes("/supabase-js/")) {
+              return "vendor-supabase";
+            }
+            // Radix UI + shadcn components
+            if (id.includes("/@radix-ui/")) {
+              return "vendor-radix";
+            }
+          }
         },
       },
     },
