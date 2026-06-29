@@ -125,7 +125,7 @@ function BillCalculatorPage() {
                 <Checkbox
                   id="calcMeterChange"
                   checked={isReplaced}
-                  onCheckedChange={(checked: boolean) => setIsReplaced(checked)}
+                  onCheckedChange={(checked) => setIsReplaced(checked === true)}
                 />
                 <Label htmlFor="calcMeterChange" className="font-semibold text-amber-400 cursor-pointer flex flex-col gap-0.5">
                   <span>Meter was replaced?</span>
