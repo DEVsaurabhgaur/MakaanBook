@@ -7,13 +7,13 @@ export const queryMakaanBookAi = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator(
     z.object({
-      prompt: z.string().min(1),
+      prompt: z.string().min(1).max(1000, "Prompt must not exceed 1000 characters"),
       history: z.array(
         z.object({
           role: z.enum(["user", "assistant"]),
-          content: z.string(),
+          content: z.string().max(2000),
         })
-      ),
+      ).max(20, "History cannot exceed 20 messages"),
     })
   )
   .handler(async ({ data, context }) => {
