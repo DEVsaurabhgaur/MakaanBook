@@ -50,35 +50,34 @@ function MyElectricityPage() {
       if (tenantData) {
         setTenant(tenantData);
 
-        if (tenantData.room_id) {
-          const { data: roomData, error: roomErr } = await supabase
-            .from("rooms")
-            .select("*")
-            .eq("id", tenantData.room_id)
-            .single();
-          if (roomErr) throw roomErr;
-          setRoom(roomData);
+        const roomPromise = tenantData.room_id
+          ? supabase.from("rooms").select("*").eq("id", tenantData.room_id).single()
+          : Promise.resolve({ data: null, error: null });
 
-          if (roomData) {
-            const { data: houseData, error: houseErr } = await supabase
-              .from("houses")
-              .select("*")
-              .eq("id", roomData.house_id)
-              .single();
-            if (houseErr) throw houseErr;
-            setHouse(houseData);
-          }
-        }
-
-        const { data: billsData, error: billsErr } = await supabase
+        const billsPromise = supabase
           .from("electricity_bills")
           .select("*")
           .eq("tenant_id", tenantData.id)
           .order("year", { ascending: false })
           .order("month", { ascending: false });
 
-        if (billsErr) throw billsErr;
-        setBills(billsData || []);
+        const [roomRes, billsRes] = await Promise.all([roomPromise, billsPromise]);
+
+        if (roomRes.error && tenantData.room_id) throw roomRes.error;
+        if (billsRes.error) throw billsRes.error;
+
+        if (roomRes.data) {
+          setRoom(roomRes.data);
+          const { data: houseData, error: houseErr } = await supabase
+            .from("houses")
+            .select("*")
+            .eq("id", roomRes.data.house_id)
+            .single();
+          if (houseErr) throw houseErr;
+          setHouse(houseData);
+        }
+
+        setBills(billsRes.data || []);
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to fetch electricity records");
