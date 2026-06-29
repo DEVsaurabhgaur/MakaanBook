@@ -36,7 +36,7 @@ function Landing() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 pb-24 pt-12">
+      <main id="main-content" className="mx-auto max-w-6xl px-6 pb-24 pt-12">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="grid items-center gap-12 md:grid-cols-2">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
@@ -68,7 +68,7 @@ function Landing() {
                 { label: "Overdue", value: "₹13,000", color: "stat-red", icon: Building2 },
               ].map((s) => (
                 <div key={s.label} className="stat-tile">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground"><s.icon className="h-4 w-4" style={{ color: `var(--color-${s.color})` }} />{s.label}</div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground"><s.icon className="h-4 w-4" aria-hidden="true" style={{ color: `var(--color-${s.color})` }} />{s.label}</div>
                   <div className="mt-2 text-2xl font-bold" style={{ color: `var(--color-${s.color})` }}>{s.value}</div>
                 </div>
               ))}
