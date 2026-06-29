@@ -19,8 +19,20 @@ import process from "node:process";
 export function getServerConfig() {
   return {
     nodeEnv: process.env.NODE_ENV,
-    // Add server-only values here, e.g.:
-    //   databaseUrl: process.env.DATABASE_URL,
-    //   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    // Gemini AI key for Hinglish conversational assistant
+    geminiApiKey: process.env.GEMINI_API_KEY,
+    // Supabase service role — bypasses RLS, server-side only
+    supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
   };
+}
+
+/** Returns true if all critical server env vars are set. */
+export function validateServerEnv(): { ok: boolean; missing: string[] } {
+  const required = [
+    "SUPABASE_URL",
+    "SUPABASE_PUBLISHABLE_KEY",
+    "GEMINI_API_KEY",
+  ];
+  const missing = required.filter((k) => !process.env[k]);
+  return { ok: missing.length === 0, missing };
 }
