@@ -117,12 +117,12 @@ function AiAssistantPage() {
             ))}
 
             {loading && (
-              <div className="flex gap-3 max-w-[85%] mr-auto">
+              <div className="flex gap-3 max-w-[85%] mr-auto" role="status" aria-live="polite" aria-label="AI is thinking">
                 <div className="h-8 w-8 rounded-lg bg-muted border border-border flex items-center justify-center shrink-0">
                   <Bot className="h-4 w-4 text-primary" />
                 </div>
                 <div className="rounded-2xl rounded-tl-none bg-card/85 border border-border px-4 py-3 text-sm flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                  <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
                   MakaanBook data analyze kar raha hai...
                 </div>
               </div>
