@@ -105,21 +105,12 @@ function Dashboard() {
 
         if (activeTenant) {
           setTenantRoom(activeTenant.room_id);
-          // Fetch room
-          if (activeTenant.room_id) {
-            const { data: roomData, error: roomErr } = await supabase.from("rooms").select("*").eq("id", activeTenant.room_id).single();
-            if (roomErr) throw roomErr;
-            setTenantRoom(roomData);
 
-            if (roomData) {
-              const { data: houseData, error: houseErr } = await supabase.from("houses").select("*").eq("id", roomData.house_id).single();
-              if (houseErr) throw houseErr;
-              setTenantHouse(houseData);
-            }
-          }
+          const roomPromise = activeTenant.room_id
+            ? supabase.from("rooms").select("*").eq("id", activeTenant.room_id).single()
+            : Promise.resolve({ data: null, error: null });
 
-          // Fetch pending rent records
-          const { data: pendingRecord, error: pendingErr } = await supabase
+          const pendingPromise = supabase
             .from("rent_records")
             .select("*")
             .eq("tenant_id", activeTenant.id)
@@ -128,12 +119,8 @@ function Dashboard() {
             .order("month", { ascending: false })
             .limit(1)
             .maybeSingle();
-          if (pendingErr) throw pendingErr;
 
-          setPendingRent(pendingRecord);
-
-          // Fetch latest electricity bill
-          const { data: latestElec, error: latestElecErr } = await supabase
+          const electricityPromise = supabase
             .from("electricity_bills")
             .select("*")
             .eq("tenant_id", activeTenant.id)
@@ -141,9 +128,26 @@ function Dashboard() {
             .order("month", { ascending: false })
             .limit(1)
             .maybeSingle();
-          if (latestElecErr) throw latestElecErr;
 
-          setLatestBill(latestElec);
+          const [roomRes, pendingRes, electricityRes] = await Promise.all([
+            roomPromise,
+            pendingPromise,
+            electricityPromise,
+          ]);
+
+          if (roomRes.error && activeTenant.room_id) throw roomRes.error;
+          if (pendingRes.error) throw pendingRes.error;
+          if (electricityRes.error) throw electricityRes.error;
+
+          if (roomRes.data) {
+            setTenantRoom(roomRes.data);
+            const { data: houseData, error: houseErr } = await supabase.from("houses").select("*").eq("id", roomRes.data.house_id).single();
+            if (houseErr) throw houseErr;
+            setTenantHouse(houseData);
+          }
+
+          setPendingRent(pendingRes.data);
+          setLatestBill(electricityRes.data);
         }
       }
     } catch (err: any) {
