@@ -144,12 +144,14 @@ function AiAssistantPage() {
                 placeholder="Ask e.g. Kis room ka rent pending hai?"
                 className="pr-12 py-5 rounded-xl border-border bg-background/50 focus-visible:ring-primary"
                 disabled={loading}
+                aria-label="Ask MakaanBook AI"
               />
               <Button
                 onClick={() => handleSend(input)}
                 size="icon"
                 className="absolute right-1.5 h-8 w-8 rounded-lg bg-primary hover:opacity-90"
                 disabled={loading || !input.trim()}
+                aria-label="Send message"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -166,6 +168,7 @@ function AiAssistantPage() {
                 key={s}
                 onClick={() => handleSend(s)}
                 disabled={loading}
+                aria-label={`Ask: ${s}`}
                 className="text-left text-xs bg-card/30 border border-border hover:border-primary/50 hover:bg-card/50 transition-all p-3 rounded-xl cursor-pointer w-48 md:w-full shrink-0 leading-normal"
               >
                 {s}
