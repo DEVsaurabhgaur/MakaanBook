@@ -51,37 +51,34 @@ function MyRentPage() {
       if (tenantData) {
         setTenant(tenantData);
 
-        // Fetch room
-        if (tenantData.room_id) {
-          const { data: roomData, error: roomErr } = await supabase
-            .from("rooms")
-            .select("*")
-            .eq("id", tenantData.room_id)
-            .single();
-          if (roomErr) throw roomErr;
-          setRoom(roomData);
+        const roomPromise = tenantData.room_id
+          ? supabase.from("rooms").select("*").eq("id", tenantData.room_id).single()
+          : Promise.resolve({ data: null, error: null });
 
-          if (roomData) {
-            const { data: houseData, error: houseErr } = await supabase
-              .from("houses")
-              .select("*")
-              .eq("id", roomData.house_id)
-              .single();
-            if (houseErr) throw houseErr;
-            setHouse(houseData);
-          }
-        }
-
-        // Fetch rent records
-        const { data: records, error: recErr } = await supabase
+        const recordsPromise = supabase
           .from("rent_records")
           .select("*")
           .eq("tenant_id", tenantData.id)
           .order("year", { ascending: false })
           .order("month", { ascending: false });
 
-        if (recErr) throw recErr;
-        setRentRecords(records || []);
+        const [roomRes, recordsRes] = await Promise.all([roomPromise, recordsPromise]);
+
+        if (roomRes.error && tenantData.room_id) throw roomRes.error;
+        if (recordsRes.error) throw recordsRes.error;
+
+        if (roomRes.data) {
+          setRoom(roomRes.data);
+          const { data: houseData, error: houseErr } = await supabase
+            .from("houses")
+            .select("*")
+            .eq("id", roomRes.data.house_id)
+            .single();
+          if (houseErr) throw houseErr;
+          setHouse(houseData);
+        }
+
+        setRentRecords(recordsRes.data || []);
       }
     } catch (err: any) {
       toast.error(err.message || "Failed to fetch tenant records");
