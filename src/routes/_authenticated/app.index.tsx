@@ -57,36 +57,33 @@ function Dashboard() {
       setRole(userRole);
 
       if (userRole === "landlord") {
-        // Fetch landlord metrics
-        const { count: houses, error: housesErr } = await supabase.from("houses").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
-        if (housesErr) throw housesErr;
-        setHouseCount(houses || 0);
-
-        const { count: rooms, error: roomsErr } = await supabase.from("rooms").select("*", { count: "exact", head: true }).eq("landlord_id", user.id);
-        if (roomsErr) throw roomsErr;
-        setRoomCount(rooms || 0);
-
-        const { count: tenants, error: tenantsErr } = await supabase.from("tenants").select("*", { count: "exact", head: true }).eq("landlord_id", user.id).eq("is_active", true);
-        if (tenantsErr) throw tenantsErr;
-        setTenantCount(tenants || 0);
-
-        // Fetch rent record aggregates for the current year
         const currentYear = new Date().getFullYear();
         const currentMonth = new Date().getMonth() + 1;
 
-        const { data: currentRent, error: currentRentErr } = await supabase
-          .from("rent_records")
-          .select("amount_paid, rent_amount, status")
-          .eq("landlord_id", user.id)
-          .eq("month", currentMonth)
-          .eq("year", currentYear);
-        if (currentRentErr) throw currentRentErr;
+        // Fetch landlord metrics and recent payments in parallel
+        const [housesRes, roomsRes, tenantsRes, currentRentRes, recPaymentsRes] = await Promise.all([
+          supabase.from("houses").select("*", { count: "exact", head: true }).eq("landlord_id", user.id),
+          supabase.from("rooms").select("*", { count: "exact", head: true }).eq("landlord_id", user.id),
+          supabase.from("tenants").select("*", { count: "exact", head: true }).eq("landlord_id", user.id).eq("is_active", true),
+          supabase.from("rent_records").select("amount_paid, rent_amount, status").eq("landlord_id", user.id).eq("month", currentMonth).eq("year", currentYear),
+          supabase.from("rent_records").select("id, tenant_id, rent_amount, amount_paid, month, year, status, tenants(full_name)").eq("landlord_id", user.id).order("created_at", { ascending: false }).limit(5)
+        ]);
+
+        if (housesRes.error) throw housesRes.error;
+        if (roomsRes.error) throw roomsRes.error;
+        if (tenantsRes.error) throw tenantsRes.error;
+        if (currentRentRes.error) throw currentRentRes.error;
+        if (recPaymentsRes.error) throw recPaymentsRes.error;
+
+        setHouseCount(housesRes.count || 0);
+        setRoomCount(roomsRes.count || 0);
+        setTenantCount(tenantsRes.count || 0);
 
         let collected = 0;
         let pending = 0;
 
-        if (currentRent) {
-          currentRent.forEach((r) => {
+        if (currentRentRes.data) {
+          currentRentRes.data.forEach((r) => {
             collected += Number(r.amount_paid || 0);
             if (r.status !== "paid") {
               pending += Number(r.rent_amount) - Number(r.amount_paid);
@@ -95,17 +92,7 @@ function Dashboard() {
         }
         setTotalCollected(collected);
         setTotalPending(pending);
-
-        // Fetch recent payments
-        const { data: recPayments, error: recPaymentsErr } = await supabase
-          .from("rent_records")
-          .select("id, tenant_id, rent_amount, amount_paid, month, year, status, tenants(full_name)")
-          .eq("landlord_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(5);
-        if (recPaymentsErr) throw recPaymentsErr;
-
-        setRecentPayments(recPayments || []);
+        setRecentPayments(recPaymentsRes.data || []);
       } else {
         // Fetch active tenant profile
         const { data: activeTenant, error: activeTenantErr } = await supabase
