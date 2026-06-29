@@ -23,14 +23,19 @@ function AppShell() {
   const qc = useQueryClient();
 
   useEffect(() => {
+    let active = true;
     supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle()
       .then(({ data, error }) => {
+        if (!active) return;
         if (error) {
           toast.error(error.message || "Failed to load user role");
           return;
         }
         setRole((data?.role as Role) ?? "landlord");
       });
+    return () => {
+      active = false;
+    };
   }, [user.id]);
 
   async function signOut() {
