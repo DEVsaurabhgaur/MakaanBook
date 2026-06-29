@@ -95,15 +95,15 @@ function AppShell() {
                 activeProps={{ className: "bg-sidebar-accent text-sidebar-accent-foreground" }}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
-                <n.icon className="h-4 w-4" /> {n.label}
+                <n.icon className="h-4 w-4" aria-hidden="true" /> {n.label}
               </Link>
             ))}
           </nav>
           <div className="mt-8 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-3 text-xs">
             <div className="font-medium text-sidebar-foreground truncate">{user.email}</div>
             <div className="mt-0.5 text-sidebar-foreground/60 capitalize">{role ?? "loading…"}</div>
-            <Button variant="ghost" size="sm" className="mt-2 w-full justify-start" onClick={signOut}>
-              <LogOut className="mr-2 h-4 w-4" /> Sign out
+            <Button variant="ghost" size="sm" className="mt-2 w-full justify-start" onClick={signOut} aria-label="Sign out of MakaanBook">
+              <LogOut className="mr-2 h-4 w-4" aria-hidden="true" /> Sign out
             </Button>
           </div>
         </aside>
