@@ -1,6 +1,12 @@
 # MakaanBook 🏠⚡
 **Smart Rent & Electricity Bill Manager for Indian Landlords and Tenants**
 
+[![License: Private](https://img.shields.io/badge/license-Private-red.svg)](LICENSE)
+[![Built with TanStack Start](https://img.shields.io/badge/TanStack%20Start-v1-orange)](https://tanstack.com/router)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E)](https://supabase.com)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com)
+[![AI: Gemini 1.5 Flash](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blue)](https://ai.google.dev)
+
 MakaanBook is a modern, responsive web application built to simplify rental management, utility billing, and landlord-tenant communication. It handles complex billing scenarios, maintains financial histories, and integrates a smart AI assistant to query records in conversational Hinglish.
 
 ---
@@ -26,20 +32,29 @@ MakaanBook is a modern, responsive web application built to simplify rental mana
 - **Detailed Ledgers**: Track rent due dates, collections, pending balances, transaction IDs, or cash notes.
 - **Dynamic PDF Reports**: Generate structured monthly reports for houses, collections, and electricity statements directly using standard printing engines.
 
-### 🤖 Hinglish AI Assistant (Google Gemini)
+### 🤖 Hinglish AI Assistant (Google Gemini 1.5 Flash)
 - **Conversational Queries**: Ask questions like *"Rahul ka electricity bill pending hai kya?"* or *"Iss mahine total rent kitna collect hua?"*.
-- **Live Database Context**: Securely feeds real-time building and ledger metrics to Gemini 1.5 Flash to generate context-aware answers.
+- **Live Database Context**: Securely feeds real-time building and ledger metrics to Gemini 1.5 Flash Latest to generate context-aware answers.
+
+### 🔒 Security & Auth
+- **Row-Level Security**: Every Supabase query is scoped to the landlord or tenant via PostgreSQL RLS policies.
+- **Dual roles**: Landlord and tenant users — tenants get a read-only self-service dashboard.
+- **Google OAuth + Email/Password**: Flexible authentication via Supabase Auth.
 
 ---
 
 ## Technology Stack 🛠️
 
-- **Framework**: [TanStack Start](https://tanstack.com/router/v1/docs/start/overview) (React SSR powered by Vite & Nitro)
-- **Database & Auth**: [Supabase](https://supabase.com/) (PostgreSQL with Row-Level Security, Native OAuth, and Storage Buckets)
-- **Styling**: Tailwind CSS & Radix UI primitives (shadcn/ui style component tokens)
-- **AI Engine**: Google Gemini 1.5 Flash API
-- **Client State**: TanStack Query (React Query)
-- **Reporting**: JS-PDF & AutoTable
+| Layer | Technology |
+|---|---|
+| Framework | [TanStack Start](https://tanstack.com/router/v1/docs/start/overview) (React SSR + Vite + Nitro) |
+| Database & Auth | [Supabase](https://supabase.com/) (PostgreSQL + RLS + Storage Buckets) |
+| Styling | Tailwind CSS v4 + Radix UI (shadcn/ui tokens) |
+| AI Engine | Google Gemini 1.5 Flash Latest API |
+| Client State | TanStack Query v5 (React Query) |
+| Reporting | jsPDF + autoTable |
+| Deployment | Vercel (SSR via Nitro + Edge Functions) |
+| Animations | Framer Motion |
 
 ---
 
@@ -99,8 +114,42 @@ To deploy the application to a public HTTPS server:
 ### Vercel Deployment
 1. Connect your repository on [Vercel](https://vercel.com).
 2. Vercel automatically detects the **TanStack Start** framework.
-3. Configure the environment variables in the project settings.
+3. Configure the environment variables in the project settings (all keys from `.env.example`).
 4. Click **Deploy**.
+
+> **Note**: The `vercel.json` configures SSR via `api/ssr.js`. All routes are rewritten through this function.
+
+---
+
+## Project Structure 📁
+
+```
+src/
+├── routes/                 # File-based routing (TanStack Router)
+│   ├── __root.tsx          # Root layout with SEO, fonts, Toaster
+│   ├── index.tsx           # Landing page
+│   ├── auth.tsx            # Sign in / Sign up
+│   ├── auth_.callback.tsx  # OAuth callback handler
+│   └── _authenticated/     # Protected routes (requires auth)
+│       ├── route.tsx       # Auth guard (redirects to /auth if unauthenticated)
+│       ├── app.tsx         # App shell with sidebar navigation
+│       ├── app.index.tsx   # Dashboard (landlord + tenant views)
+│       ├── app.properties.tsx
+│       ├── app.tenants.tsx
+│       ├── app.rent.tsx
+│       ├── app.electricity.tsx
+│       ├── app.reports.tsx
+│       ├── app.ai.tsx      # Hinglish AI assistant
+│       ├── app.calculator.tsx
+│       ├── app.my-rent.tsx # Tenant rent history
+│       └── app.my-electricity.tsx
+├── lib/
+│   └── api/
+│       └── ai.functions.ts # Gemini server function
+├── integrations/supabase/  # Supabase client and types
+├── components/ui/          # shadcn/ui Radix components
+└── styles.css              # Global Tailwind CSS
+```
 
 ---
 
