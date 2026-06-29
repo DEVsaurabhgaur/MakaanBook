@@ -45,6 +45,10 @@ function ElectricityPage() {
   const [tenantId, setTenantId] = useState("");
   const [month, setMonth] = useState((new Date().getMonth() + 1).toString());
   const [year, setYear] = useState(new Date().getFullYear().toString());
+  const elecYearOptions = (() => {
+    const cy = new Date().getFullYear();
+    return [cy - 1, cy, cy + 1, cy + 2].map(String);
+  })();
   const [previousReading, setPreviousReading] = useState("");
   const [currentReading, setCurrentReading] = useState("");
   const [unitRate, setUnitRate] = useState("8");
@@ -425,7 +429,7 @@ function ElectricityPage() {
                   <Select value={year} onValueChange={setYear}>
                     <SelectTrigger id="elecYear"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {["2025", "2026", "2027", "2028"].map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                      {elecYearOptions.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -436,7 +440,7 @@ function ElectricityPage() {
                 <Checkbox
                   id="meterChange"
                   checked={isMeterReplaced}
-                  onCheckedChange={(checked: boolean) => setIsMeterReplaced(checked)}
+                  onCheckedChange={(checked) => setIsMeterReplaced(checked === true)}
                 />
                 <Label htmlFor="meterChange" className="font-semibold text-amber-400 cursor-pointer flex flex-col gap-0.5">
                   <span>Meter changed due to fault?</span>
