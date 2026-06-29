@@ -75,27 +75,27 @@ function ElectricityPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const { data: tenantsData, error: tenantsErr } = await supabase.from("tenants").select("*").eq("landlord_id", user.id);
-      if (tenantsErr) throw tenantsErr;
-      setTenants(tenantsData || []);
+      const [tenantsRes, roomsRes, housesRes, billsRes] = await Promise.all([
+        supabase.from("tenants").select("*").eq("landlord_id", user.id),
+        supabase.from("rooms").select("*").eq("landlord_id", user.id),
+        supabase.from("houses").select("*").eq("landlord_id", user.id),
+        supabase
+          .from("electricity_bills")
+          .select("*")
+          .eq("landlord_id", user.id)
+          .order("year", { ascending: false })
+          .order("month", { ascending: false })
+      ]);
 
-      const { data: roomsData, error: roomsErr } = await supabase.from("rooms").select("*").eq("landlord_id", user.id);
-      if (roomsErr) throw roomsErr;
-      setRooms(roomsData || []);
+      if (tenantsRes.error) throw tenantsRes.error;
+      if (roomsRes.error) throw roomsRes.error;
+      if (housesRes.error) throw housesRes.error;
+      if (billsRes.error) throw billsRes.error;
 
-      const { data: housesData, error: housesErr } = await supabase.from("houses").select("*").eq("landlord_id", user.id);
-      if (housesErr) throw housesErr;
-      setHouses(housesData || []);
-
-      const { data: billsData, error: billsErr } = await supabase
-        .from("electricity_bills")
-        .select("*")
-        .eq("landlord_id", user.id)
-        .order("year", { ascending: false })
-        .order("month", { ascending: false });
-
-      if (billsErr) throw billsErr;
-      setBills(billsData || []);
+      setTenants(tenantsRes.data || []);
+      setRooms(roomsRes.data || []);
+      setHouses(housesRes.data || []);
+      setBills(billsRes.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load electricity bills");
     } finally {
