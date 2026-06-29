@@ -105,17 +105,17 @@ function AuthPage() {
               <Label htmlFor="password">Password</Label>
               <Input id="password" name="password" type="password" required minLength={6} autoComplete={mode === "signup" ? "new-password" : "current-password"} />
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button type="submit" className="w-full" disabled={loading} aria-label={mode === "signup" ? "Create landlord account" : "Sign in to MakaanBook"}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />}
               {mode === "signup" ? "Create account" : "Sign in"}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             {mode === "signup" ? (
-              <>Already have an account?{" "}<button onClick={() => setMode("signin")} className="text-primary hover:underline">Sign in</button></>
+              <>Already have an account?{" "}<button onClick={() => setMode("signin")} className="text-primary hover:underline" aria-label="Switch to sign in">Sign in</button></>
             ) : (
-              <>New landlord?{" "}<button onClick={() => setMode("signup")} className="text-primary hover:underline">Create an account</button></>
+              <>New landlord?{" "}<button onClick={() => setMode("signup")} className="text-primary hover:underline" aria-label="Switch to create account">Create an account</button></>
             )}
           </div>
         </div>
