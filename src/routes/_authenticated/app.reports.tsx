@@ -47,17 +47,19 @@ function ReportsPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const { data: tenantsData, error: tenantsErr } = await supabase.from("tenants").select("*").eq("landlord_id", user.id);
-      if (tenantsErr) throw tenantsErr;
-      setTenants(tenantsData || []);
+      const [tenantsRes, roomsRes, housesRes] = await Promise.all([
+        supabase.from("tenants").select("*").eq("landlord_id", user.id),
+        supabase.from("rooms").select("*").eq("landlord_id", user.id),
+        supabase.from("houses").select("*").eq("landlord_id", user.id)
+      ]);
 
-      const { data: roomsData, error: roomsErr } = await supabase.from("rooms").select("*").eq("landlord_id", user.id);
-      if (roomsErr) throw roomsErr;
-      setRooms(roomsData || []);
+      if (tenantsRes.error) throw tenantsRes.error;
+      if (roomsRes.error) throw roomsRes.error;
+      if (housesRes.error) throw housesRes.error;
 
-      const { data: housesData, error: housesErr } = await supabase.from("houses").select("*").eq("landlord_id", user.id);
-      if (housesErr) throw housesErr;
-      setHouses(housesData || []);
+      setTenants(tenantsRes.data || []);
+      setRooms(roomsRes.data || []);
+      setHouses(housesRes.data || []);
     } catch (err: any) {
       toast.error(err.message || "Failed to load data");
     } finally {
