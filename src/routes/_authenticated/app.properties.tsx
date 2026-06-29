@@ -54,27 +54,29 @@ function PropertiesPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const { data: housesData, error: housesErr } = await supabase
-        .from("houses")
-        .select("*")
-        .eq("landlord_id", user.id)
-        .order("created_at", { ascending: false });
+      const [housesRes, roomsRes] = await Promise.all([
+        supabase
+          .from("houses")
+          .select("*")
+          .eq("landlord_id", user.id)
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("rooms")
+          .select("*")
+          .eq("landlord_id", user.id)
+          .order("room_number")
+      ]);
 
-      if (housesErr) throw housesErr;
-      setHouses(housesData || []);
+      if (housesRes.error) throw housesRes.error;
+      if (roomsRes.error) throw roomsRes.error;
 
-      if (housesData && housesData.length > 0 && !selectedHouseId) {
-        setSelectedHouseId(housesData[0].id);
+      setHouses(housesRes.data || []);
+
+      if (housesRes.data && housesRes.data.length > 0 && !selectedHouseId) {
+        setSelectedHouseId(housesRes.data[0].id);
       }
 
-      const { data: roomsData, error: roomsErr } = await supabase
-        .from("rooms")
-        .select("*")
-        .eq("landlord_id", user.id)
-        .order("room_number");
-
-      if (roomsErr) throw roomsErr;
-      setRooms(roomsData || []);
+      setRooms(roomsRes.data || []);
     } catch (error: any) {
       toast.error(error.message || "Failed to fetch property details");
     } finally {
