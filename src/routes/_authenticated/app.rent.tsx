@@ -43,6 +43,7 @@ function RentRecordsPage() {
   // Filter states
   const [selectedHouseFilter, setSelectedHouseFilter] = useState<string>("all");
   const [selectedMonthFilter, setSelectedMonthFilter] = useState<string>("all");
+  const [selectedYearFilter, setSelectedYearFilter] = useState<string>(new Date().getFullYear().toString());
 
   // Form states
   const [tenantId, setTenantId] = useState("");
@@ -240,8 +241,10 @@ function RentRecordsPage() {
   const filteredRecords = rentRecords.filter((rec) => {
     if (selectedHouseFilter !== "all" && rec.house_id !== selectedHouseFilter) return false;
     if (selectedMonthFilter !== "all" && rec.month.toString() !== selectedMonthFilter) return false;
+    if (selectedYearFilter !== "all" && rec.year.toString() !== selectedYearFilter) return false;
     return true;
   });
+  const filterYearOptions = Array.from(new Set(rentRecords.map((r) => r.year.toString()))).sort((a, b) => parseInt(b) - parseInt(a));
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -275,6 +278,17 @@ function RentRecordsPage() {
             <SelectContent>
               <SelectItem value="all">All Months</SelectItem>
               {MONTHS.map((m, idx) => <SelectItem key={idx} value={(idx + 1).toString()}>{m}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-1">
+          <Label>Filter by Year</Label>
+          <Select value={selectedYearFilter} onValueChange={setSelectedYearFilter}>
+            <SelectTrigger><SelectValue placeholder="All Years" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {filterYearOptions.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
