@@ -107,7 +107,7 @@ function AppShell() {
             </Button>
           </div>
         </aside>
-        <main role="main" className="flex-1 px-4 py-6 md:px-8 md:py-10">
+        <main id="main-content" role="main" className="flex-1 px-4 py-6 md:px-8 md:py-10">
           <Outlet />
         </main>
       </div>

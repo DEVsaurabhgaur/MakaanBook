@@ -75,7 +75,17 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className="dark">
       <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <body>
+        {/* Skip to main content for keyboard/screen reader accessibility */}
+        <a
+          href="#main-content"
+          className="fixed left-2 top-2 z-[9999] -translate-y-16 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground focus:translate-y-0 transition-transform"
+        >
+          Skip to main content
+        </a>
+        {children}
+        <Scripts />
+      </body>
     </html>
   );
 }
