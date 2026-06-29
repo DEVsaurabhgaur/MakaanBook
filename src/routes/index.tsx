@@ -15,6 +15,8 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "MakaanBook — Rent & Electricity Bill Manager for Indian Landlords" },
       { name: "description", content: "Track rent, electricity bills, payment proofs and tenants. AI-powered insights, PDF reports, multi-property dashboard." },
+      { name: "keywords", content: "rent manager, electricity bill calculator, indian landlords, tenant ledger, rent receipt, rent tracker india, submeter calculator" },
+      { name: "author", content: "Saurabh Gaur" },
     ],
   }),
   component: Landing,
