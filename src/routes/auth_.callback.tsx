@@ -19,6 +19,13 @@ function CallbackPage() {
         const error = params.get("error");
         const errorDescription = params.get("error_description");
 
+        // Check if session is already active
+        const { data: initialSession } = await supabase.auth.getSession();
+        if (initialSession.session) {
+          window.location.replace("/app");
+          return;
+        }
+
         if (error) {
           console.error("OAuth error:", error, errorDescription);
           window.location.replace("/auth?error=" + encodeURIComponent(error));
