@@ -6,6 +6,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E)](https://supabase.com)
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black)](https://vercel.com)
 [![AI: Gemini 1.5 Flash](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-blue)](https://ai.google.dev)
+[![Status: Launch Ready](https://img.shields.io/badge/Status-Launch%20Ready%20🚀-brightgreen)](https://github.com)
 
 MakaanBook is a modern, responsive web application built to simplify rental management, utility billing, and landlord-tenant communication. It handles complex billing scenarios, maintains financial histories, and integrates a smart AI assistant to query records in conversational Hinglish.
 
