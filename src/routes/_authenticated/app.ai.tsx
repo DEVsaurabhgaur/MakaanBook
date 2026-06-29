@@ -42,7 +42,7 @@ function AiAssistantPage() {
   }, [messages, loading]);
 
   const handleSend = useCallback(async (promptText: string) => {
-    if (!promptText.trim()) return;
+    if (!promptText.trim() || loading) return;
     const userMsg: Message = { role: "user", content: promptText };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
@@ -71,7 +71,7 @@ function AiAssistantPage() {
     } finally {
       setLoading(false);
     }
-  }, [messages, loading]);
+  }, [messages]);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 h-[85vh] flex flex-col">
