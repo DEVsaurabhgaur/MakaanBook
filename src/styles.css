@@ -160,3 +160,26 @@
   padding: 1.25rem;
   background: linear-gradient(135deg, color-mix(in oklab, var(--card) 80%, transparent), color-mix(in oklab, var(--card) 60%, transparent));
 }
+
+/* Visually hidden but accessible to screen readers */
+@utility sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Respect reduced-motion preference — disable animations */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
