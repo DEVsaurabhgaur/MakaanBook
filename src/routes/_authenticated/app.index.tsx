@@ -159,8 +159,9 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex h-96 items-center justify-center" role="status" aria-live="polite" aria-label="Loading dashboard">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
+        <span className="sr-only">Loading your dashboard…</span>
       </div>
     );
   }
