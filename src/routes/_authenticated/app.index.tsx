@@ -43,15 +43,17 @@ function Dashboard() {
   async function fetchProfileAndStats() {
     setLoading(true);
     try {
-      // Fetch profile
-      const { data: profile, error: profileErr } = await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle();
-      if (profileErr) throw profileErr;
-      if (profile?.full_name) setFullName(profile.full_name);
+      // Fetch profile and role in parallel
+      const [profileRes, roleRes] = await Promise.all([
+        supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle()
+      ]);
 
-      // Fetch user role
-      const { data: roleData, error: roleErr } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
-      if (roleErr) throw roleErr;
-      const userRole = (roleData?.role as Role) || "landlord";
+      if (profileRes.error) throw profileRes.error;
+      if (roleRes.error) throw roleRes.error;
+
+      if (profileRes.data?.full_name) setFullName(profileRes.data.full_name);
+      const userRole = (roleRes.data?.role as Role) || "landlord";
       setRole(userRole);
 
       if (userRole === "landlord") {
