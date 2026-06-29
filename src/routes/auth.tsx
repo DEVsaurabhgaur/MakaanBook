@@ -81,7 +81,7 @@ function AuthPage() {
             {mode === "signup" ? "Tenants — your landlord will send you credentials." : "Sign in to your dashboard."}
           </p>
 
-          <Button type="button" variant="outline" className="mt-6 w-full" onClick={onGoogle} disabled={googleLoading}>
+          <Button type="button" variant="outline" className="mt-6 w-full" onClick={onGoogle} disabled={googleLoading} aria-label="Continue with Google">
             {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24"><path fill="currentColor" d="M21.35 11.1H12v3.2h5.35c-.23 1.46-1.7 4.3-5.35 4.3-3.22 0-5.85-2.66-5.85-5.95s2.63-5.95 5.85-5.95c1.83 0 3.06.78 3.76 1.45l2.56-2.46C16.86 4.13 14.66 3.15 12 3.15 6.98 3.15 2.9 7.23 2.9 12.25S6.98 21.35 12 21.35c6.92 0 9.45-4.86 9.45-7.36 0-.5-.05-.88-.1-1.25z"/></svg>}
             Continue with Google
           </Button>
