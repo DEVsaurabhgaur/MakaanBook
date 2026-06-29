@@ -50,6 +50,8 @@ function RentRecordsPage() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [rentAmount, setRentAmount] = useState("");
   const [status, setStatus] = useState<"pending" | "paid" | "partial" | "overdue">("pending");
+  const currentYearNum = new Date().getFullYear();
+  const yearOptions = [currentYearNum - 1, currentYearNum, currentYearNum + 1, currentYearNum + 2].map(String);
   const [amountPaid, setAmountPaid] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [paidDate, setPaidDate] = useState(new Date().toISOString().split("T")[0]);
@@ -387,7 +389,7 @@ function RentRecordsPage() {
                   <Select value={year} onValueChange={setYear}>
                     <SelectTrigger id="rentYear"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {["2025", "2026", "2027", "2028"].map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
+                      {yearOptions.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
