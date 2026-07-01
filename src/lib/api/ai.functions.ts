@@ -35,6 +35,7 @@ export const queryMakaanBookAi = createServerFn({ method: "POST" })
       const { data: rentRecords } = await supabase.from("rent_records").select("*").eq("landlord_id", userId).order("created_at", { ascending: false }).limit(25);
       const { data: electricityBills } = await supabase.from("electricity_bills").select("*").eq("landlord_id", userId).order("created_at", { ascending: false }).limit(25);
 
+      // Build context containing buildings, tenant states, and electrical logs
       // 2. Build database context description
       const contextText = `
 You are MakaanBook AI, a smart assistant built to help Indian landlords manage properties, track rent collections, and calculate electricity bills.
