@@ -101,6 +101,8 @@ If they ask about meter changes, note if 'is_meter_replaced' is true on any of t
       return { response: answer };
     } catch (err: any) {
       console.error("Gemini AI Error:", err);
-      return { response: `Error: ${err.message || "Something went wrong while talking to Gemini."}` };
+      const isDev = process.env.NODE_ENV === "development";
+      const errorMsg = isDev ? (err.message || "Something went wrong") : "Something went wrong while communicating with the AI service.";
+      return { response: `Error: ${errorMsg}` };
     }
   });
