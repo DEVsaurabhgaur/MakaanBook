@@ -215,6 +215,7 @@ function ElectricityPage() {
         proofUrl = urlData.publicUrl;
       }
 
+      // Parse calculation inputs and insert bill snapshot records
       const totalPaid = parseFloat(amountPaid) || 0;
 
       const { error } = await supabase.from("electricity_bills").insert({
